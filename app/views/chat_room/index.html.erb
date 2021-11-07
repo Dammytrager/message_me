@@ -1,1 +1,37 @@
-<p>Hello World</p>
+<h2 class="ui center aligned inverted icon header mb-3">
+  <%= image_tag 'coffee.png' %>
+  <div class="mb-3">Say Something</div>
+</h2>
+
+<div class="ui grid">
+  <div class="twelve wide column">
+    <div class="ui card inverted-secondary fluid">
+      <div class="content">
+        <div class="ui feed">
+          <%= render @messages %>
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui transparent inverted icon input fluid">
+          <input type="text" placeholder="Enter Message...">
+          <i class="white edit icon"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="four wide column">
+    <div class="ui card fluid inverted-secondary">
+      <div class="ui vertical fluid inverted menu">
+        <a class="item">
+          Home
+        </a>
+        <a class="item">
+          Messages
+        </a>
+        <a class="item">
+          Friends
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -6,11 +6,20 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%= favicon_link_tag %>
+
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
   <body>
-    <%= yield %>
+     <div class="ui inverted segment app-container">
+
+      <%= render 'shared/nav' %>
+
+        <div class="ui container">
+          <%= yield %>
+        </div>
+    </div>
   </body>
 </html>
