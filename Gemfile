@@ -29,7 +29,6 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 # Allows for .env files
 gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
-# Access an interactive console on exception pages or by calling 'console' anywhere in the code.
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
