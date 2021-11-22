@@ -1,7 +1,7 @@
 RSpec.describe "ChatRooms", type: :request do
   describe "GET /index" do
 
-    let(:user) { User.create(username: 'Joy', password: 'password') }
+    let(:user) { FactoryGirl.create(:user) }
 
     it "Should return status 302 when not logged in" do
       get root_path

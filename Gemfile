@@ -36,6 +36,10 @@ group :development, :test do
 
   # Add rspec for testing
   gem 'rspec-rails'
+  # Factory for generating resources for testing
+  gem 'factory_girl_rails'
+  # Database cleaner to clean the db after each test
+  gem 'database_cleaner'
 end
 
 group :development do

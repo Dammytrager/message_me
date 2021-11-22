@@ -1,5 +1,5 @@
 RSpec.describe "Sessions", type: :request do
-  let(:user) { User.create(username: 'Joy', password: 'password') }
+  let(:user) { FactoryGirl.create(:user) }
 
   describe "GET /login" do
 
@@ -17,7 +17,7 @@ RSpec.describe "Sessions", type: :request do
 
   describe "POST /login" do
     let(:wrong_user) { {username: 'Joyous', password: 'password'} }
-    let(:right_user) { {username: 'Joy', password: 'password'} }
+    let(:right_user) { {username: user.username, password: 'password'} }
 
     it "should allow guests with correct credentials" do
       post login_path, params: {session: right_user}
