@@ -34,6 +34,8 @@ jobs:
           DB_PASS: $DB_PASS
           DB_HOST: $DB_HOST
           DB_NAME: $DB_NAME
+          DATABASE_CLEANER_ALLOW_PRODUCTION: true
+          DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: true
       - image: circleci/postgres:12.0-alpine
 
     executor: ruby/default
