@@ -66,16 +66,16 @@ jobs:
       - checkout
 
       # Install Node dependencies
-#      - restore_cache:
-#        keys:
-#          - npm-build-{{ checksum "package.json" }}
-#      - run:
-#          name: install node dependencies
-#          command: npm install
-#      - save_cache:
-#          key: npm-build-{{ checksum "package.json" }}
-#          paths:
-#            - node_modules
+      - restore_cache:
+        keys:
+          - npm-build-{{ checksum "package.json" }}
+      - run:
+          name: install node dependencies
+          command: npm install
+      - save_cache:
+          key: npm-build-{{ checksum "package.json" }}
+          paths:
+            - node_modules
 
       # Install bundler dependencies
 #      - restore_cache:
