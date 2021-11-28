@@ -53,7 +53,9 @@ jobs:
           key: rails-build-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
-      - run: bundle exec rails c
+      - run: bundle exec rails r "puts ENV['DATABASE_URL']"
+      - run: bundle exec rails r "puts ENV['DB_USER']"
+      - run: bundle exec rails r "puts ENV['DB_PASS']"
       - run: bundle exec rspec
 
   migrate:
