@@ -48,7 +48,37 @@ jobs:
     docker:
       - image: cimg/ruby:3.0.0-node
     executor: ruby/default
-    steps: *setup
+    steps:
+      # checkout to branch
+      - checkout
+
+      # Install Node dependencies
+      - restore_cache:
+        keys:
+          - npm-build-{{ checksum "package.json" }}
+      - run:
+          name: install node dependencies
+          command: npm install
+      - save_cache:
+          key: npm-build-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      # Install bundler dependencies
+      - restore_cache:
+          keys:
+            - rails-build-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: install bundler
+          command: gem install bundler:2.2.3
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
+      - save_cache:
+          key: rails-build-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
 
   test:
     docker:
@@ -65,7 +95,36 @@ jobs:
 
     executor: ruby/default
     steps:
-      - *setup
+      # checkout to branch
+      - checkout
+
+      # Install Node dependencies
+      - restore_cache:
+        keys:
+          - npm-build-{{ checksum "package.json" }}
+      - run:
+          name: install node dependencies
+          command: npm install
+      - save_cache:
+          key: npm-build-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      # Install bundler dependencies
+      - restore_cache:
+          keys:
+            - rails-build-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: install bundler
+          command: gem install bundler:2.2.3
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
+      - save_cache:
+          key: rails-build-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
 
       # run tests
       - run: bundle exec rspec
@@ -80,7 +139,36 @@ jobs:
 
     executor: ruby/default
     steps:
-      - *setup
+      # checkout to branch
+      - checkout
+
+      # Install Node dependencies
+      - restore_cache:
+        keys:
+          - npm-build-{{ checksum "package.json" }}
+      - run:
+          name: install node dependencies
+          command: npm install
+      - save_cache:
+          key: npm-build-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      # Install bundler dependencies
+      - restore_cache:
+          keys:
+            - rails-build-{{ checksum "Gemfile.lock" }}
+      - run:
+          name: install bundler
+          command: gem install bundler:2.2.3
+      - run:
+          name: Which bundler?
+          command: bundle -v
+      - ruby/bundle-install
+      - save_cache:
+          key: rails-build-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
 
       # Run migrations
       - bundle exec rails db:migrate
