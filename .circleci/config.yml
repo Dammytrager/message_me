@@ -53,7 +53,7 @@ jobs:
           key: rails-build-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
-      - bundle exec rspec
+      - run: rspec
 
   migrate:
     docker:
