@@ -6,6 +6,7 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
   ruby: circleci/ruby@0.1.2
+  heroku: circleci/heroku@0.0.10
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -24,10 +25,76 @@ jobs:
           command: bundle -v
       - ruby/bundle-install
 
+  test:
+    docker:
+      - image: cimg/ruby:3.0.0-node
+        environment:
+          RAILS_ENV: test
+          DB_USER: $DB_USER
+          DB_PASS: $DB_PASS
+          DB_HOST: $DB_HOST
+          DB_NAME: $DB_NAME
+      - image: circleci/postgres:12.0-alpine
+
+      executor: ruby/default
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - rails-build-{{ checksum "Gemfile.lock" }}
+        - run:
+            name: install bundler
+            command: gem install bundler:2.2.3
+        - run:
+            name: Which bundler?
+            command: bundle -v
+        - ruby/bundle-install
+        - save_cache:
+            key: rails-build-{{ checksum "Gemfile.lock" }}
+            paths:
+              - vendor/bundle
+        - rspec
+
+  migrate:
+    docker:
+      - image: cimg/ruby:3.0.0-node
+        environment:
+          RAILS_ENV: production
+          DATABASE_URL: $DATABASE_URL
+      - image: circleci/postgres:12.0-alpine
+
+      executor: ruby/default
+      steps:
+        - checkout
+        - restore_cache:
+            keys:
+              - rails-build-{{ checksum "Gemfile.lock" }}
+        - run:
+            name: install bundler
+            command: gem install bundler:2.2.3
+        - run:
+            name: Which bundler?
+            command: bundle -v
+        - ruby/bundle-install
+        - save_cache:
+            key: rails-build-{{ checksum "Gemfile.lock" }}
+            paths:
+              - vendor/bundle
+        - rails db:migrate
+
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+  build_app: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
-      - build
+      - test
+      - build:
+          requires:
+            - test
+      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
+          requires:
+            - build
+      - migrate:
+          type: approval
