@@ -23,11 +23,11 @@ setup: &setup
       key: npm-build-{{ checksum "package.json" }}
       paths:
         - node_modules
+
+  # Install bundler dependencies
   - restore_cache:
       keys:
         - rails-build-{{ checksum "Gemfile.lock" }}
-
-  # Install bundler dependencies
   - run:
       name: install bundler
       command: gem install bundler:2.2.3
@@ -48,8 +48,7 @@ jobs:
     docker:
       - image: cimg/ruby:3.0.0-node
     executor: ruby/default
-    steps:
-      <<: *setup
+    steps: *setup
 
   test:
     docker:
@@ -66,7 +65,7 @@ jobs:
 
     executor: ruby/default
     steps:
-      <<: *setup
+      - *setup
 
       # run tests
       - run: bundle exec rspec
@@ -81,10 +80,10 @@ jobs:
 
     executor: ruby/default
     steps:
-      <<: *setup
+      - *setup
 
       # Run migrations
-      - rails db:migrate
+      - bundle exec rails db:migrate
 
 
 # Invoke jobs via workflows
