@@ -90,3 +90,4 @@ production:
   database: message_me_production
   username: message_me
   password: <%= ENV['MESSAGE_ME_DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
