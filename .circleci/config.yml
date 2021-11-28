@@ -8,6 +8,39 @@ orbs:
   ruby: circleci/ruby@0.1.2
   heroku: circleci/heroku@0.0.10
 
+setup: &setup
+  # checkout to branch
+  - checkout
+
+  # Install Node dependencies
+  - restore_cache:
+    keys:
+      - npm-build-{{ checksum "package.json" }}
+  - run:
+      name: install node dependencies
+      command: npm install
+  - save_cache:
+      key: npm-build-{{ checksum "package.json" }}
+      paths:
+        - node_modules
+  - restore_cache:
+      keys:
+        - rails-build-{{ checksum "Gemfile.lock" }}
+
+  # Install bundler dependencies
+  - run:
+      name: install bundler
+      command: gem install bundler:2.2.3
+  - run:
+      name: Which bundler?
+      command: bundle -v
+  - ruby/bundle-install
+  - save_cache:
+      key: rails-build-{{ checksum "Gemfile.lock" }}
+      paths:
+        - vendor/bundle
+
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -16,14 +49,7 @@ jobs:
       - image: cimg/ruby:3.0.0-node
     executor: ruby/default
     steps:
-      - checkout
-      - run:
-          name: install bundler
-          command: gem install bundler:2.2.3
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
+      <<: *setup
 
   test:
     docker:
@@ -40,22 +66,9 @@ jobs:
 
     executor: ruby/default
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - rails-build-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: install bundler
-          command: gem install bundler:2.2.3
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
-      - save_cache:
-          key: rails-build-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-      - run: bundle exec rails r "ENV.delete('DATABASE_URL')"
+      <<: *setup
+
+      # run tests
       - run: bundle exec rspec
 
   migrate:
@@ -68,21 +81,9 @@ jobs:
 
     executor: ruby/default
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - rails-build-{{ checksum "Gemfile.lock" }}
-      - run:
-          name: install bundler
-          command: gem install bundler:2.2.3
-      - run:
-          name: Which bundler?
-          command: bundle -v
-      - ruby/bundle-install
-      - save_cache:
-          key: rails-build-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+      <<: *setup
+
+      # Run migrations
       - rails db:migrate
 
 
